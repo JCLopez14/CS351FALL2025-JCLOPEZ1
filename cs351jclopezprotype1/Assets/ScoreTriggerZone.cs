@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ScoreTriggerZone : MonoBehaviour
 {
-    // Keeps track if this trigger can still be used
     bool active = true;
-
-    // Assign your sound in the Inspector
     public AudioClip triggerSound;
+    private AudioSource audioSource;
 
-    // How long to keep the object alive after triggering (auto-detects if sound assigned)
-    private float destroyDelay = 0.1f;
+    private void Start()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,18 +21,21 @@ public class ScoreTriggerZone : MonoBehaviour
         {
             active = false;
 
-            // Increase score
-            ScoreManager.score++;
-
-            // Play sound once at this position
-            if (triggerSound != null)
+            // Increase score directly
+            if (ScoreManager.Instance != null)
             {
-                AudioSource.PlayClipAtPoint(triggerSound, transform.position);
-                destroyDelay = triggerSound.length;
+                ScoreManager.Instance.score++;
             }
 
-            // Destroy or deactivate this trigger after sound finishes
-            Destroy(gameObject, destroyDelay);
+            if (triggerSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(triggerSound);
+                Destroy(gameObject, triggerSound.length);
+            }
+            else
+            {
+                Destroy(gameObject, 0.1f);
+            }
         }
     }
 }
