@@ -19,7 +19,7 @@ public class PlayerController2D : MonoBehaviour
     private bool isGrounded;
 
     void Start()
-    {
+    {   
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
     }
