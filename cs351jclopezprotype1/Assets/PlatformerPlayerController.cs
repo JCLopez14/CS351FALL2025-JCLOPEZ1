@@ -17,9 +17,11 @@ public class PlatformerPlayerController : MonoBehaviour
     public AudioClip jumpSound;
 
     private AudioSource playerAudio;
-
+    private Animator animator;
     void Start()
     {
+        animator = GetComponent<Animator>();
+
         //set refrence to plater audio source
         playerAudio = GetComponent<AudioSource>();
 
@@ -54,17 +56,26 @@ public class PlatformerPlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
 
+        animator.SetFloat("xVelocityAbs", Mathf.Abs(rb.velocity.x));
+
+        animator.SetFloat("yVelocity", rb.velocity.y);
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        if (horizontalInput < 0)
+        animator.SetBool("onGround", isGrounded);
+
+        if (horizontalInput > 0)
         {
-            transform.localScale = new Vector3(1f, 1f, 1f);
+            transform.rotation = Quaternion.Euler(0, 0, 0);
 
 
         }
         else if (horizontalInput < 0)
-        {
-            transform.localScale = new Vector3(-1f, 1f, 1f);
+       {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+
+
+
         }
     }
 
