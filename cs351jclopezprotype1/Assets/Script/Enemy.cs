@@ -11,70 +11,54 @@ public class Enemy : MonoBehaviour
     private DisplayBar healthBar;
 
     public int damage = 10;
+
     private void Start()
     {
         //find the health bar in the children
         healthBar = GetComponentInChildren<DisplayBar>();
-
-        if(healthBar == null)
+        if (healthBar == null)
         {
             Debug.LogError("HealthBar (DisplayBar script) not found");
             return;
-
-
         }
         healthBar.SetMaxValue(health);
-
-
-
     }
 
     public void TakeDamage(int damage)
     {
         health -= damage;
-
         healthBar.SetValue(health);
-
-        if (health <=0)
+        if (health <= 0)
         {
-
             Die();
-
-
         }
-
-
     }
+
     void Die()
     {
         Instantiate(deathEffect, transform.position, Quaternion.identity);
-
         Destroy(gameObject);
-    
-    
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-
             if (playerHealth == null)
             {
                 Debug.LogError("PlayerHealth script not found on player");
                 return;
             }
+
             playerHealth.TakeDamage(damage);
 
-            playerHealth.Knockback(transform.position);
-
+            // Only knockback if player is still active
+            if (collision.gameObject.activeInHierarchy)
+            {
+                playerHealth.Knockback(transform.position);
+            }
         }
-
-     
-
-
-
-
     }
 
 
